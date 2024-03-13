@@ -28,17 +28,18 @@ class mqConsumer(mqConsumerInterface):
             exchange=self.exchange_name,
         )
         # finally set up a callback function for receiving messages
+        self.channel.basic_consume(
+            self.queue_name, self.on_message_callback, auto_ack=False
+        )
 
     def on_message_callback(
         self, channel, method_frame, header_frame, body
     ):
         # Acknowledge message
-        self.channel.basic_ack(method_frame.delivery_tag, False)
+        channel.basic_ack(method_frame.delivery_tag, False)
 
         #Print message (The message is contained in the body parameter variable)
         print(body)
-
-        pass
 
     def startConsuming(self):
         # Print " [*] Waiting for messages. To exit press CTRL+C"
@@ -46,8 +47,6 @@ class mqConsumer(mqConsumerInterface):
 
         # Start consuming messages
         self.channel.start_consuming()
-
-        pass
 
     def __del__(self):
         # Print "Closing RMQ connection on destruction"
