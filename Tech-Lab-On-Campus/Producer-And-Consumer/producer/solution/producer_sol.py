@@ -9,6 +9,7 @@ class mqProducer(mqProducerInterface):
         self.exchange_name = exchange_name
         self.channel = None
         self.connection = None
+        self.exchange = None
         # Call setupRMQConnection
         self.setupRMQConnection()
 
@@ -19,7 +20,8 @@ class mqProducer(mqProducerInterface):
         # Establish Channel
         self.channel = self.connection.channel()
         # Create the exchange if not already present
-        exchange = self.channel.exchange_declare(exchange=self.exchange_name)
+        if self.exchange is None:
+            self.exchange = self.channel.exchange_declare(exchange=self.exchange_name)
 
     def publishOrder(self, message: str) -> None:
         # Basic Publish to Exchange
